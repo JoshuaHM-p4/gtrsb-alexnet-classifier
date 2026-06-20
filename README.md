@@ -1,13 +1,18 @@
 ---
-title: Gtsrb Alexnet Classifier
-emoji: 👀
-colorFrom: pink
-colorTo: blue
+title: GTSRB AlexNet Traffic Sign Classifier
+emoji: 🚦
+colorFrom: blue
+colorTo: green
 sdk: gradio
-sdk_version: 6.19.0
-python_version: '3.13'
+sdk_version: 4.19.2
 app_file: app.py
 pinned: false
 ---
 
-Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference
+# GTSRB AlexNet Traffic Sign Classifier
+
+This is a demonstration repository for a fine-tuned AlexNet model on the German Traffic Sign Recognition Benchmark (GTSRB) dataset. 
+It uses a Gradio app to provide:
+1. Traffic sign image classification (43 classes).
+2. Prediction confidence display.
+3. Visualization of the model architecture and transfer learning setup.
