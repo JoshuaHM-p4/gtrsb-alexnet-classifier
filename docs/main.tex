@@ -1,0 +1,398 @@
+\documentclass[conference]{IEEEtran}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{listings}
+
+\lstset{
+  basicstyle=\scriptsize\ttfamily,
+  breaklines=true,
+  columns=fullflexible,
+  frame=single,
+  language=Python,
+  showstringspaces=false,
+  keywordstyle=\bfseries\color{blue!50!black},
+  commentstyle=\itshape\color{gray!90!black},
+  stringstyle=\color{green!40!black}
+}
+
+\usepackage[hidelinks]{hyperref}
+
+\begin{document}
+
+\begin{titlepage}
+\begin{center}
+    \vspace*{1.0cm}
+    
+    \includegraphics[width=0.25\textwidth]{icons/pup_logo.png} \\[1.0cm]
+    
+    {\Large \bfseries Image Classification Using CNN Architectures: \\ 
+    AlexNet Classification on German Traffic \\ 
+    Sign Recognition Benchmark} \\[1.5cm]
+    
+    {\large \bfseries POLYTECHNIC UNIVERSITY OF THE PHILIPPINES} \\[0.2cm]
+    {\large Department of Computer Engineering} \\[0.2cm]
+    {\large College of Engineering} \\[0.2cm]
+    {\large Sta. Mesa, Manila} \\[1.5cm]
+    
+    {\large A Final Project Submitted by Group 1 to \\ 
+    Prof. Mon Arjay F. Malbog, faculty at the \\ 
+    Polytechnic University of the Philippines \\ 
+    In partial fulfillment for a requirement \\ 
+    in CMPE 362 Pattern Recognition} \\[1.5cm]
+    
+    Presented by: \\[0.5cm]
+    {\large \bfseries Carlos Jerico S. Dela Torre} \\
+    {\large \bfseries Joshua H. Mistal} \\
+    {\large \bfseries Aidan R. Tiu} \\[1.5cm]
+    
+    \vfill
+    
+    {\large June 2026}
+\end{center}
+\end{titlepage}
+\clearpage
+
+\title{Image Classification Using CNN Architectures: AlexNet Classification on German Traffic Sign Recognition Benchmark \\[0.4cm] \large A Final Project Submitted by Group 1 to Prof. Mon Arjay, faculty at the Polytechnic University of the Philippines. In partial fulfillment for a requirement in CMPE 362 Pattern Recognition}
+
+\author{\IEEEauthorblockN{Carlos Jerico S. Dela Torre \qquad Joshua H. Mistal \qquad Aidan R. Tiu}
+\IEEEauthorblockA{\textit{Department of Computer Engineering} \\
+\textit{Polytechnic University of the Philippines}\\
+Sta. Mesa, Manila \\
+{\ttfamily\scriptsize \{carlosjericosdelatorre, joshuahmistal, aidanrtiu\}@iskolarngbayan.pup.edu.ph}}
+}
+
+\maketitle
+
+\begin{abstract}
+Traffic Sign Recognition (TSR) is a critical component of Advanced Driver Assistance Systems (ADAS), demanding high classification accuracy and real-time inference speed. This project evaluates the performance of the AlexNet Convolutional Neural Network (CNN) architecture on the German Traffic Sign Recognition Benchmark (GTSRB) dataset. Given real-world challenges such as extreme lighting variations, motion blur, and a severe dataset class imbalance, we implemented a transfer learning strategy. Using a pre-trained PyTorch AlexNet model, the low-level convolutional feature extraction layers were frozen, and the final fully connected classification layer was adapted to output predictions for the 43 traffic sign classes. Images were preprocessed, augmented, and normalized to 224x224x3 dimensions. Evaluation on the test set yielded a classification accuracy of 98.91\%, a macro-averaged precision of 0.9924, a recall of 0.9899, an F1-score of 0.9910, and a macro-average Area Under the ROC Curve (ROC-AUC) of 1.0000. These results demonstrate that transfer learning with AlexNet provides a highly robust, computationally efficient, and reliable solution for multi-class traffic sign classification under realistic environmental constraints.
+\end{abstract}
+
+\section{Chapter 1: Introduction}
+
+\subsection{Background}
+Advanced Driver Assistance Systems rely heavily on accurate environmental perception to function safely. A critical component of this perception is traffic sign recognition. Traffic signs communicate essential regulations, warnings, and directions to drivers. Automating this recognition process requires robust computer vision techniques. The German Traffic Sign Recognition Benchmark dataset provides a standardized collection of over 50,000 images across 43 classes of traffic signs \cite{stallkamp2012man}. These images capture real variations in lighting, weather, and camera angles. Historically, researchers used manual feature extraction methods, but these struggled with the diverse conditions found in real environments. Recently, deep learning models, particularly Convolutional Neural Networks, have shown superior performance in processing visual data and identifying patterns \cite{sermanet2011traffic}. 
+
+\subsection{Problem Statement}
+While Convolutional Neural Networks are highly effective for image classification, applying them to traffic sign recognition presents specific challenges. Traffic signs often appear blurry, poorly lit, or partially obscured by obstacles like trees or other vehicles \cite{wali2019traffic}. Additionally, the German Traffic Sign Recognition Benchmark dataset suffers from class imbalance, where some traffic signs have thousands of examples while others have only a few hundred. The problem is to configure and evaluate a deep learning architecture that can reliably classify these 43 different traffic sign categories under sub-optimal conditions without requiring excessive computational resources.
+
+\subsection{Objectives}
+The primary objective of this project is to implement and evaluate the AlexNet Convolutional Neural Network architecture for traffic sign classification using the German Traffic Sign Recognition Benchmark dataset. The specific objectives are:
+\begin{enumerate}
+    \item To preprocess the dataset to handle variations in image size and lighting conditions by resizing and normalizing the inputs to 224x224x3.
+    \item To adapt the pre-trained AlexNet architecture's classifier head to accommodate the 43 output classes of the dataset.
+    \item To train the model and measure its accuracy, precision, and recall against the testing data subset.
+\end{enumerate}
+
+\section{Chapter 2: Literature and Architecture}
+
+\subsection{Related Literature}
+The field of traffic sign recognition has evolved significantly over the last decade. Early approaches relied on color thresholding and shape detection, which were easily disrupted by lighting changes \cite{stallkamp2012man}. The introduction of the German Traffic Sign Recognition Benchmark spurred the adoption of machine learning methods. Sermanet and LeCun demonstrated that multi-scale Convolutional Neural Networks could achieve near human-level accuracy on this dataset, outperforming traditional algorithms \cite{sermanet2011traffic}. 
+
+Later research focused on modifying existing architectures to improve efficiency and accuracy. Ma et al. proposed an improved AlexNet model specifically for traffic signs, which reduced the convolution kernel sizes to prevent overfitting and added dropout layers \cite{ma2018traffic}. Their modified network handled background interference and motion blur more effectively than the baseline model. Similarly, Ferencz and Zoldy explored multi-class classification on the same benchmark, noting that Convolutional Neural Networks consistently achieve over 95 percent accuracy, making them the standard for modern intelligent transportation systems \cite{ferencz2023neural}. Furthermore, studies comparing different architectures have shown that while deeper networks can achieve slightly higher accuracy, AlexNet provides a strong balance of computational speed and predictive performance suitable for real-time applications \cite{arcos2025advancing}.
+
+\subsection{CNN Architecture Overview}
+A Convolutional Neural Network is a type of deep neural network designed specifically for processing grid-like data, such as images. Standard networks flatten images into a single list of pixels, which destroys the spatial relationships between adjacent pixels. Convolutional networks preserve this spatial structure. 
+
+The architecture consists of three main types of layers. Convolutional layers apply mathematical filters across the image to detect features like edges, curves, and textures. Pooling layers follow the convolutional layers to reduce the spatial dimensions of the data, which decreases the computational load and helps prevent the model from memorizing the exact training images. Finally, fully connected layers at the end of the network use the extracted features to determine the final probability of the image belonging to each target class. 
+
+Table \ref{tab:cnn_layers} summarizes the general function of these layers.
+
+\begin{table}[htbp]
+\caption{Basic Layers in a Convolutional Neural Network}
+\begin{center}
+\begin{tabular}{|l|p{5.5cm}|}
+\hline
+\textbf{Layer Type} & \textbf{Primary Function} \\
+\hline
+Convolutional & Extracts spatial features using sliding filters. \\
+\hline
+Activation (ReLU) & Introduces non-linearity to the network. \\
+\hline
+Pooling & Reduces spatial dimensions and parameter count. \\
+\hline
+Fully Connected & Maps extracted features to final class labels. \\
+\hline
+\end{tabular}
+\label{tab:cnn_layers}
+\end{center}
+\end{table}
+
+\subsection{AlexNet Architecture and Preprocessing}
+AlexNet was a breakthrough architecture that significantly advanced the field of computer vision \cite{krizhevsky2017imagenet}. The original model was designed for the ImageNet challenge, which featured high-resolution images and 1000 categories. The standard AlexNet consists of five convolutional layers, some of which are followed by max pooling layers, and three fully connected layers.
+
+For this project, we utilized the PyTorch implementation of AlexNet. To satisfy the network's architectural requirements, all GTSRB images were first resized to 256x256 pixels and subsequently center-cropped (or randomly cropped during training) to 224x224x3. While early implementations of AlexNet historically required a 227x227 input due to convolution math, PyTorch standardizes the input to 224x224 by utilizing a padding of 2 in the initial $11 \times 11$ convolution layer.
+
+Figure \ref{fig:alexnet} illustrates the basic flow of data through the network.
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=0.45\textwidth]{figures/alexnet_diagram.jpg}}
+\caption{Simplified block diagram of the AlexNet architecture.}
+\label{fig:alexnet}
+\end{figure}
+
+The network uses the Rectified Linear Unit activation function after every convolutional and fully connected layer to speed up the training process. To combat overfitting, AlexNet employs dropout regularization in the fully connected layers, which randomly ignores a percentage of neurons during training. In our transfer learning approach, the feature extraction layers are kept frozen, and the final fully connected layer is modified to output 43 values, corresponding to the 43 traffic sign classes, which are then passed through a softmax function to generate classification probabilities.
+
+\section{Chapter 3: Methodology}
+The experimental setup was implemented using Python 3 and standard deep learning and data processing libraries. The pipeline relies on PyTorch and Torchvision for neural network architecture modeling and image transformations. Data manipulation was handled using Pandas and NumPy, while visual inspection and plotting of evaluation metrics were carried out with Matplotlib and Seaborn. Core evaluation computations, including dataset splitting and classification metrics calculation, were performed using scikit-learn. To facilitate high-throughput tensor computations and accelerate the neural network training pipeline, the model was executed on a CUDA-capable Graphics Processing Unit (GPU).
+
+\subsection{Dataset}
+The German Traffic Sign Recognition Benchmark (GTSRB) was established as a multi-class, single-image classification challenge held at the International Joint Conference on Neural Networks (IJCNN) 2011 \cite{stallkamp2012man}. The benchmark was designed to allow researchers to participate and design classification models without requiring special, domain-specific hand-crafted feature knowledge. The dataset features a large, lifelike database containing over 50,000 images representing 43 distinct classes of traffic signs. As shown in Fig. \ref{fig:sample_all_classes}, these classes cover warnings, speed limits, mandatory directives, and prohibitory signs, which vary in shape, color, lighting, and design.
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=0.45\textwidth]{figures/sample_all_classes.png}}
+\caption{Sample traffic signs across all 43 classes of the GTSRB dataset.}
+\label{fig:sample_all_classes}
+\end{figure}
+
+One of the primary challenges of the GTSRB dataset is class imbalance. Fig. \ref{fig:dataset_sample_distributions} illustrates the distribution of samples across the 43 classes. Some categories contain thousands of images, while others have only a few hundred. 
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=0.45\textwidth]{figures/dataset_sample_distributions.png}}
+\caption{Class-wise sample distribution in the GTSRB dataset demonstrating the class imbalance.}
+\label{fig:dataset_sample_distributions}
+\end{figure}
+
+\subsection{Dataset Loading and Split}
+To ensure a robust evaluation of the model, the training and testing sets originally provided by GTSRB were pooled together to create a unified database of images. A stratified train-validation-test split was then executed with a ratio of 70\% for training, 15\% for validation, and 15\% for testing. Using stratified splitting ensures that the class representation proportions are preserved equally across all three splits, preventing any single subset from lacking representation of the minority classes.
+
+To load the images and their respective labels from the directories, a custom PyTorch dataset class, \texttt{GTSRBDataset}, was implemented. The dataset class maps the relative file paths and class IDs from the loaded CSV metadata and converts all images to RGB format, ensuring three-channel input compatibility. The code implementation is detailed below:
+
+\begin{lstlisting}
+class GTSRBDataset(Dataset):
+    def __init__(self, dataframe, root_dir, transform=None):
+        self.dataframe = dataframe.reset_index(drop=True)
+        self.root_dir = root_dir
+        self.transform = transform
+        self.image_paths = self.dataframe['Path'].values
+        self.labels = self.dataframe['ClassId'].values
+        self.classes = sorted(self.dataframe['ClassId'].unique())
+
+    def __len__(self):
+        return len(self.dataframe)
+
+    def __getitem__(self, idx):
+        img_path = os.path.join(self.root_dir, self.image_paths[idx])
+        image = Image.open(img_path).convert('RGB')
+        label = self.labels[idx]
+        if self.transform:
+            image = self.transform(image)
+        return image, label
+\end{lstlisting}
+
+After the datasets were initialized, PyTorch \texttt{DataLoader} utilities were configured to load samples in batches of 32. Training data was shuffled dynamically during loading, whereas validation and testing loaders kept sorting static to guarantee reproducible evaluations. Additionally, double-buffered multi-processing loaders (\texttt{num\_workers=2}) were employed to accelerate the GPU data feeding pipeline. The implementation details for the dataset division and DataLoader initialization are shown in the code block below:
+
+\begin{lstlisting}
+# Stratified 70/15/15 split
+full_df = pd.concat([train_df_raw, test_df_raw], ignore_index=True)
+train_df, temp_df = train_test_split(full_df, test_size=0.30, random_state=42, stratify=full_df['ClassId'])
+val_df, test_df = train_test_split(temp_df, test_size=0.50, random_state=42, stratify=temp_df['ClassId'])
+
+# Initialize dataset objects
+train_dataset = GTSRBDataset(train_df, BASE_PATH, transform=train_transforms)
+val_dataset = GTSRBDataset(val_df, BASE_PATH, transform=test_transforms)
+test_dataset = GTSRBDataset(test_df, BASE_PATH, transform=test_transforms)
+
+# Initialize PyTorch DataLoaders
+train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True, num_workers=2)
+val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False, num_workers=2)
+test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False, num_workers=2)
+\end{lstlisting}
+
+\subsection{Preprocessing and Augmentation}
+Traffic signs in real-world scenarios are subjected to varying ambient lighting, perspectives, and orientations. To enhance model generalization, preprocessing and data augmentation were applied to the training dataset.
+
+The preprocessing pipeline performs the following steps:
+\begin{enumerate}
+    \item Resizing all images to $256 \times 256$ pixels to establish a uniform size.
+    \item Applying a random rotation of up to $15^\circ$ to simulate sign misalignment.
+    \item Applying color jitter (brightness, contrast, and saturation adjustments by a factor of 0.2) to simulate varying lighting conditions.
+    \item Center-cropping to $224 \times 224 \times 3$ to match the standard input dimensions expected by the pretrained model.
+    \item Normalizing pixel values using the ImageNet channel-wise mean ($[0.485, 0.456, 0.406]$) and standard deviation ($[0.229, 0.224, 0.225]$).
+\end{enumerate}
+
+For the validation and testing sets, only resizing, center cropping, and normalization were applied to ensure consistent evaluation. The transform pipelines are implemented as follows:
+
+\begin{lstlisting}
+train_transforms = transforms.Compose([
+    transforms.Resize((256, 256)),
+    transforms.RandomRotation(15),
+    transforms.ColorJitter(brightness=0.2, 
+                           contrast=0.2, 
+                           saturation=0.2),
+    transforms.ToTensor(),
+    normalize
+])
+
+test_transforms = transforms.Compose([
+    transforms.Resize((256, 256)),
+    transforms.CenterCrop(224),
+    transforms.ToTensor(),
+    normalize
+])
+\end{lstlisting}
+
+\subsection{CNN Model and Transfer Learning Setup}
+Rather than training a complex network from scratch, a transfer learning strategy was implemented using PyTorch's pretrained AlexNet. As described in Chapter 2, the network's feature extraction layers were frozen to preserve general low-level visual features.
+
+To adapt the model to the GTSRB dataset, the final layer of the classifier head (index 6) was modified. The output features were changed from 1000 (ImageNet categories) to 43 (GTSRB traffic sign classes). The network was initialized and setup on a CUDA-capable GPU when available, as shown below:
+
+\begin{lstlisting}
+# Load pre-trained AlexNet
+model = models.alexnet(weights=models.AlexNet_Weights.DEFAULT)
+
+# Freeze feature extraction layers
+for param in model.features.parameters():
+    param.requires_grad = False
+
+# Modify the classifier head for 43 classes
+num_ftrs = model.classifier[6].in_features
+model.classifier[6] = nn.Linear(num_ftrs, num_classes)
+model = model.to(device)
+\end{lstlisting}
+
+The output model architecture printout, showcasing the frozen convolutional layers and the modified classifier head containing 43 output units, is shown below:
+
+\begin{lstlisting}[language=]
+AlexNet(
+  (features): Sequential(
+    (0): Conv2d(3, 64, kernel_size=(11, 11), stride=(4, 4), padding=(2, 2))
+    (1): ReLU(inplace=True)
+    (2): MaxPool2d(kernel_size=3, stride=2, padding=0, dilation=1, ceil_mode=False)
+    (3): Conv2d(64, 192, kernel_size=(5, 5), stride=(1, 1), padding=(2, 2))
+    (4): ReLU(inplace=True)
+    (5): MaxPool2d(kernel_size=3, stride=2, padding=0, dilation=1, ceil_mode=False)
+    (6): Conv2d(192, 384, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (7): ReLU(inplace=True)
+    (8): Conv2d(384, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (9): ReLU(inplace=True)
+    (10): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (11): ReLU(inplace=True)
+    (12): MaxPool2d(kernel_size=3, stride=2, padding=0, dilation=1, ceil_mode=False)
+  )
+  (avgpool): AdaptiveAvgPool2d(output_size=(6, 6))
+  (classifier): Sequential(
+    (0): Dropout(p=0.5, inplace=False)
+    (1): Linear(in_features=9216, out_features=4096, bias=True)
+    (2): ReLU(inplace=True)
+    (3): Dropout(p=0.5, inplace=False)
+    (4): Linear(in_features=4096, out_features=4096, bias=True)
+    (5): ReLU(inplace=True)
+    (6): Linear(in_features=4096, out_features=43, bias=True)
+  )
+)
+\end{lstlisting}
+
+\subsection{Training Process}
+The modified model was trained for a maximum of 15 epochs. Since the features were frozen, only the weights in the classifier layers were optimized. The training process configuration is as follows:
+\begin{itemize}
+    \item \textbf{Loss Function}: Cross Entropy Loss, which is standard for multi-class classification problems.
+    \item \textbf{Optimizer}: Adam optimizer, restricted to updating only the classifier parameters, with a learning rate of $0.0001$.
+    \item \textbf{Early Stopping}: To prevent overfitting, validation loss was monitored. If validation loss failed to decrease for 3 consecutive epochs, training was early-stopped, and the best model weights were restored.
+\end{itemize}
+
+The optimizer and hyperparameters were declared using:
+
+\begin{lstlisting}
+num_epochs = 15
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.classifier.parameters(), lr=0.0001)
+patience = 3
+\end{lstlisting}
+
+\section{Chapter 4: Results and Discussion}
+This section presents the training and evaluation results of the fine-tuned AlexNet model on the GTSRB dataset. The model's performance is quantified using metrics such as accuracy, precision, recall, F1-score, and the Area Under the Receiver Operating Characteristic (ROC-AUC) curve.
+
+\subsection{Performance Metrics}
+The model was evaluated on the unseen test subset (15\% of the total dataset) after the completion of 15 training epochs. Table \ref{tab:test_metrics} details the classification scores.
+
+\begin{table}[htbp]
+\caption{Classification Performance Metrics on the Test Set}
+\begin{center}
+\begin{tabular}{|l|r|}
+\hline
+\textbf{Metric} & \textbf{Value / Score} \\
+\hline
+Test Accuracy & 98.91\% \\
+\hline
+Precision (Macro Average) & 0.9924 \\
+\hline
+Recall (Macro Average) & 0.9899 \\
+\hline
+F1-Score (Macro Average) & 0.9910 \\
+\hline
+ROC-AUC (Macro Average) & 1.0000 \\
+\hline
+\end{tabular}
+\label{tab:test_metrics}
+\end{center}
+\end{table}
+
+The macro-averaged precision of 0.9924 and recall of 0.9899 demonstrate that the model classifies signs with high specificity and sensitivity across all categories. The F1-score of 0.9910 further confirms that the model handles the dataset's class imbalance without significant bias toward heavily populated classes.
+
+\subsection{Loss and Accuracy Curves}
+The progress of training and validation loss and accuracy over the 15 epochs is shown in Fig. \ref{fig:loss_acc}. 
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=0.45\textwidth]{figures/loss_acc_per_epoch.png}}
+\caption{Training and validation loss (left) and classification accuracy (right) over 15 epochs.}
+\label{fig:loss_acc}
+\end{figure}
+
+The training loss decreased from 0.8950 in the first epoch to 0.1263 by the fifteenth epoch. Simultaneously, the validation loss dropped from 0.2851 to 0.0311, showing that the model successfully learned features without overfitting. The validation accuracy achieved a peak of 99.06\% at the final epoch. The early stopping mechanism, configured with a patience of 3, was not triggered, as the validation loss continued to show an overall downward trend.
+
+\subsection{Confusion Matrix}
+To evaluate the class-wise classification behavior, the confusion matrix was plotted. Due to the high number of classes (43), the confusion matrix heatmap visualizes overall classification trends. Fig. \ref{fig:confusion_matrix} shows the confusion matrix for the test set.
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=0.45\textwidth]{figures/accuracy_graph.png}}
+\caption{Confusion matrix for the 43 classes of the GTSRB test set.}
+\label{fig:confusion_matrix}
+\end{figure}
+
+The confusion matrix exhibits a strong, dark diagonal line, indicating that the vast majority of instances for each class were correctly classified. Very few off-diagonal values are present, confirming minimal misclassifications even among visually similar traffic signs (e.g., speed limit variations).
+
+\subsection{ROC-AUC Analysis}
+To evaluate the model's discriminative ability, a macro-averaged Receiver Operating Characteristic (ROC) curve was computed. Fig. \ref{fig:roc_auc} illustrates the ROC curve.
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=0.45\textwidth]{figures/roc-auc-graph.png}}
+\caption{Macro-average Receiver Operating Characteristic (ROC) curve for multi-class classification.}
+\label{fig:roc_auc}
+\end{figure}
+
+The macro-averaged Area Under the Curve (AUC) is 1.0000, representing near-perfect class separation. This confirms that the model's posterior probabilities are highly reliable for distinguishing between classes.
+
+\subsection{Prediction Samples}
+To inspect the model's behavior qualitatively, a random batch of 20 sample images from the test set was visualized along with their true and predicted labels. As shown in Fig. \ref{fig:samples}, the model correctly predicted all 20 signs.
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=0.45\textwidth]{figures/20_sample_predictions.png}}
+\caption{Qualitative evaluation showing sample predictions on 20 test images.}
+\label{fig:samples}
+\end{figure}
+
+The sample covers signs under challenging conditions such as motion blur, low lighting, and partial perspective changes, illustrating the robustness of the fine-tuned AlexNet architecture.
+
+\section{Chapter 5: Conclusion and Recommendations}
+This research successfully implemented and evaluated the AlexNet Convolutional Neural Network architecture on the German Traffic Sign Recognition Benchmark dataset. The results indicate that using pre-trained convolutional features and transfer learning is a highly effective strategy for traffic sign classification.
+
+\subsection{Key Findings}
+Analysis of the GTSRB dataset highlighted significant class imbalance, which presented a major challenge for classification robustness. Despite this disparity, stratifying the dataset and adopting transfer learning allowed the model to generalize effectively across poorly represented categories. The fine-tuned AlexNet model demonstrated exceptional capability, achieving a classification accuracy of 98.91\% on the test set. The macro-averaged F1-score of 0.9910 and an Area Under the ROC Curve of 1.0000 confirm that the model makes highly reliable predictions without being biased toward classes with larger sample sizes.
+
+\subsection{Literature Comparison}
+The performance of our fine-tuned AlexNet model compares favorably with state-of-the-art architectures found in literature. Sermanet and LeCun achieved near human-level classification using custom multi-scale CNNs, while Ferencz and Zoldy observed that generic deep networks consistently exceed a baseline of 95\% accuracy on the GTSRB benchmark. Our implementation achieves a competitive accuracy of 98.91\% which is comparable to the modified AlexNet models from Ma et al. and deeper architectures like VGG or ResNet, but at a fraction of the training time. This supports the findings of Arcos-Garcia et al. that AlexNet provides a superior balance of computational efficiency and predictive accuracy, making it highly suitable for real-time deployment in driver assistance systems.
+
+\subsection{Challenges and Limitations}
+Several challenges were encountered during the project. The primary limitation was the physical hardware constraints, which necessitated freezing the feature extraction layers and training only the classifier head to keep training times within acceptable bounds. While this transfer learning approach yielded high accuracy, it prevented the model from fine-tuning low-level kernels for sign-specific features like specific geometric borders. Additionally, real-world variations such as extreme motion blur, low illumination, and physical sign deterioration in the dataset remained challenging for standard classification pipelines.
+
+\subsection{Recommendations}
+For future research, we recommend training the convolutional feature layers using a gradual unfreezing schedule, which could allow the network to learn low-level shapes specific to traffic regulations. Applying advanced data augmentation methods, such as synthetic generation of blurred or occluded signs, would likely improve robustness under sub-optimal outdoor conditions. Lastly, deploying the trained model on edge computing hardware would provide valuable insights into its inference latency and energy efficiency in real-time driver assistance systems.
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

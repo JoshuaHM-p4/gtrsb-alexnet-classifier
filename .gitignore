@@ -1,0 +1,35 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IPYNB checkpoints
+.ipynb_checkpoints/
+
+# LaTeX auxiliary files (compiled files)
+docu/*.aux
+docu/*.log
+docu/*.toc
+docu/*.synctex.gz
+docu/*.fdb_latexmk
+docu/*.fls
+docu/*.blg
+docu/*.bbl
+docu/*.out
+docs/*.aux
+docs/*.log
+docs/*.toc
+docs/*.synctex.gz
+docs/*.fdb_latexmk
+docs/*.fls
+docs/*.blg
+docs/*.bbl
+docs/*.out
+
+# Keep PDFs and images
+!docu/*.pdf
+!docs/*.pdf
+!docu/figures/
+!docs/figures/
+!docu/icons/
+!docs/icons/
