@@ -125,7 +125,7 @@ with gr.Blocks(theme=gr.themes.Soft(primary_hue="blue", secondary_hue="green")) 
     gr.Markdown("An interactive research tool for classifying traffic signs from the German Traffic Sign Recognition Benchmark dataset using fine-tuned AlexNet.")
     
     with gr.Tabs():
-        with gr.TabItem("Classifier"):
+        with gr.Tab("Classifier"):
             with gr.Row():
                 with gr.Column():
                     input_img = gr.Image(type="pil", label="Upload Traffic Sign Image")
@@ -135,7 +135,7 @@ with gr.Blocks(theme=gr.themes.Soft(primary_hue="blue", secondary_hue="green")) 
             
             btn.click(predict, inputs=input_img, outputs=output_label)
             
-        with gr.TabItem("Architecture"):
+        with gr.Tab("Architecture"):
             gr.Markdown(architecture_explanation)
 
 demo.launch()
