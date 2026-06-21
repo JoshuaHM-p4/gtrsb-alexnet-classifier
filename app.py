@@ -2,6 +2,8 @@ import gradio as gr
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import uvicorn
+from fastapi import FastAPI
 from torchvision import models, transforms
 from PIL import Image
 import os
@@ -126,7 +128,7 @@ The classifier block contains three fully connected layers with Dropout regulari
 """
 
 # Define Gradio layout
-with gr.Blocks() as demo:
+with gr.Blocks(theme=gr.themes.Soft(primary_hue="blue", secondary_hue="green")) as demo:
     gr.Markdown("# 🚦 GTSRB Traffic Sign Classifier (AlexNet)")
     gr.Markdown("An interactive research tool for classifying traffic signs from the German Traffic Sign Recognition Benchmark dataset using fine-tuned AlexNet.")
     
@@ -144,9 +146,13 @@ with gr.Blocks() as demo:
         with gr.Tab("Architecture"):
             gr.Markdown(architecture_explanation)
 
-demo.launch(
-    theme=gr.themes.Soft(primary_hue="blue", secondary_hue="green"),
-    ssr_mode=False,
-    server_name="0.0.0.0",
-    server_port=int(os.getenv("PORT", "7860")),
-)
+api = FastAPI()
+
+@api.get("/healthz")
+def healthz():
+    return {"status": "ok"}
+
+app = gr.mount_gradio_app(api, demo, path="/")
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("PORT", "7860")))

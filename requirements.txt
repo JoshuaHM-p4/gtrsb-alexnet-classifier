@@ -1,4 +1,6 @@
 gradio>=6.2.0,<7
+fastapi
+uvicorn
 torch
 torchvision
 pillow
