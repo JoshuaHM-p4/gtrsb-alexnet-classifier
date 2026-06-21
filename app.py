@@ -138,4 +138,5 @@ with gr.Blocks(theme=gr.themes.Soft(primary_hue="blue", secondary_hue="green")) 
         with gr.Tab("Architecture"):
             gr.Markdown(architecture_explanation)
 
-demo.launch()
+demo.launch(ssr_mode=False)
+
