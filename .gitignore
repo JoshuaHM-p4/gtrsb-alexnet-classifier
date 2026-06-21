@@ -33,3 +33,5 @@ docs/*.out
 !docs/figures/
 !docu/icons/
 !docs/icons/
+
+.venv

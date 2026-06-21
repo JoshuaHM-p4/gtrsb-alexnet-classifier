@@ -61,28 +61,34 @@ preprocess = transforms.Compose([
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 ])
 
-# Load model
-model_path = "alexnet_gtsrb_finetuned.pth"
-if not os.path.exists(model_path):
-    # Try looking in parent folder in case app is executed in app/ directory
-    model_path = "../alexnet_gtsrb_finetuned.pth"
+# Lazy-load model so Space becomes healthy faster
+MODEL = None
 
-model = models.alexnet(weights=None)
-num_ftrs = model.classifier[6].in_features
-model.classifier[6] = nn.Linear(num_ftrs, 43)
+def load_model():
+    global MODEL
+    if MODEL is not None:
+        return MODEL
 
-try:
-    model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
+    model_path = "alexnet_gtsrb_finetuned.pth"
+    if not os.path.exists(model_path):
+        # Try looking in parent folder in case app is executed in app/ directory
+        model_path = "../alexnet_gtsrb_finetuned.pth"
+
+    model = models.alexnet(weights=None)
+    num_ftrs = model.classifier[6].in_features
+    model.classifier[6] = nn.Linear(num_ftrs, 43)
+    model.load_state_dict(torch.load(model_path, map_location=torch.device("cpu")))
+    model.eval()
+    MODEL = model
     print("Model loaded successfully.")
-except Exception as e:
-    print(f"Error loading model: {e}")
-
-model.eval()
+    return MODEL
 
 def predict(image):
     if image is None:
         return {}
-    
+
+    model = load_model()
+
     # Preprocess image
     tensor = preprocess(image).unsqueeze(0)
     
@@ -138,5 +144,9 @@ with gr.Blocks() as demo:
         with gr.Tab("Architecture"):
             gr.Markdown(architecture_explanation)
 
-demo.launch(theme=gr.themes.Soft(primary_hue="blue", secondary_hue="green"), ssr_mode=False)
-
+demo.launch(
+    theme=gr.themes.Soft(primary_hue="blue", secondary_hue="green"),
+    ssr_mode=False,
+    server_name="0.0.0.0",
+    server_port=int(os.getenv("PORT", "7860")),
+)
