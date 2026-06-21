@@ -270,10 +270,12 @@ This document contains the detailed presenter script and speaker notes for the *
 **Slide Heading:** *Chapter 5: Recommendations & Future Work*
 
 ### Presenter Speech:
-> "Finally, we recommend the following for future research:
+> "Finally, we recommend the following directions for future research:
 > 
-> 1.  **Gradual Unfreezing:** Explore gradual unfreezing of early convolutional layers to fine-tune filters for traffic sign boundaries.
-> 2.  **Synthetic Augmentation:** Apply generative models to produce blurred and occluded training signs, improving noise tolerance.
-> 3.  **Edge Deployment:** Deploy the model on edge hardware (Jetson/Pi) and evaluate inference latency and power efficiency in active driver assistance systems.
+> 1.  **Gradual Unfreezing:** Explore gradual unfreezing of early convolutional layers during training to fine-tune filters for traffic sign geometric boundaries.
+> 2.  **Multi-National Dataset Expansion:** Incorporate traffic sign datasets from other countries, such as US speed limits or Chinese warning symbols. This builds a more globally generalized and universal approach to classification.
+> 3.  **Transition to Object Detection:** Extend the pipeline beyond isolated classification to real-time object detection frameworks, such as YOLO or Faster R-CNN, to localize and classify multiple signs simultaneously within complex road scenes.
+> 4.  **Edge Compiler Conversion and Deployment:** Compile the trained model using TensorRT or ONNX and deploy on energy-efficient edge processors like Nvidia Jetson or Raspberry Pi to benchmark real-world inference latency.
 > 
-> Thank you. We are now happy to take any questions."
+> Thank you for your time and attention. We are now happy to address any questions you may have."
+

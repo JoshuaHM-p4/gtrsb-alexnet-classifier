@@ -620,9 +620,10 @@ def main():
     tf_l26.word_wrap = True
     
     add_bullet(tf_l26, "Unfreezing schedules: Explore gradual layer unfreezing to fine-tune early kernels for sign boundaries.", size=18, bold=True, color=RGBColor(21, 57, 107))
-    add_bullet(tf_l26, "Advanced synthetic augmentation: Use generative models to produce blurred and occluded training signs.")
-    add_bullet(tf_l26, "Edge compiler conversion: Compile to TensorRT or ONNX for edge processors (Jetson/Pi).")
-    add_bullet(tf_l26, "Dynamic ADAS Integration: Benchmark inference latency to ensure speeds match driver assistance systems.")
+    add_bullet(tf_l26, "Multi-national dataset expansion: Incorporate multi-national datasets (e.g. US, China) for a more universal approach.")
+    add_bullet(tf_l26, "Transition to object detection: Extend to real-time detectors (YOLO, Faster R-CNN) for multi-sign localization.")
+    add_bullet(tf_l26, "Edge compiler conversion & deployment: Compile to TensorRT or ONNX and deploy on Nvidia Jetson or Raspberry Pi.")
+
     
     # Save Presentation
     prs.save("docu/gtsrb_alexnet_presentation.pptx")
