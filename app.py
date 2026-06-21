@@ -120,7 +120,7 @@ The classifier block contains three fully connected layers with Dropout regulari
 """
 
 # Define Gradio layout
-with gr.Blocks(theme=gr.themes.Soft(primary_hue="blue", secondary_hue="green")) as demo:
+with gr.Blocks() as demo:
     gr.Markdown("# 🚦 GTSRB Traffic Sign Classifier (AlexNet)")
     gr.Markdown("An interactive research tool for classifying traffic signs from the German Traffic Sign Recognition Benchmark dataset using fine-tuned AlexNet.")
     
@@ -138,4 +138,5 @@ with gr.Blocks(theme=gr.themes.Soft(primary_hue="blue", secondary_hue="green")) 
         with gr.Tab("Architecture"):
             gr.Markdown(architecture_explanation)
 
-demo.launch()
+demo.launch(theme=gr.themes.Soft(primary_hue="blue", secondary_hue="green"), ssr_mode=False)
+
