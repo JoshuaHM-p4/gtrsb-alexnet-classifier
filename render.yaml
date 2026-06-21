@@ -10,16 +10,3 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.10.13
-
-  - type: cron
-    name: gtrsb-alexnet-keepalive
-    runtime: python
-    plan: free
-    schedule: "*/10 * * * *"
-    buildCommand: pip install -r requirements.txt
-    startCommand: python -c "import os, urllib.request; urllib.request.urlopen(os.environ['TARGET_URL'], timeout=30); print('ping ok')"
-    envVars:
-      - key: PYTHON_VERSION
-        value: 3.10.13
-      - key: TARGET_URL
-        value: https://gtrsb-alexnet-classifier.onrender.com/healthz
