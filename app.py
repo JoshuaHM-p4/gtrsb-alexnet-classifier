@@ -83,9 +83,23 @@ def load_model():
     print("Model loaded successfully.")
     return MODEL
 
-def predict(image):
+def predict(image_dict):
+    if image_dict is None or not isinstance(image_dict, dict) or "composite" not in image_dict:
+        return {}
+
+    image = image_dict["composite"]
     if image is None:
         return {}
+
+    # If the image has transparency (typical after cropping in gr.ImageEditor),
+    # crop to the non-transparent bounding box to bypass transparent padding.
+    if image.mode == "RGBA":
+        bbox = image.getbbox()
+        if bbox:
+            image = image.crop(bbox)
+        image = image.convert("RGB")
+    elif image.mode != "RGB":
+        image = image.convert("RGB")
 
     model = load_model()
 
@@ -134,7 +148,7 @@ with gr.Blocks() as demo:
         with gr.Tab("Classifier"):
             with gr.Row():
                 with gr.Column():
-                    input_img = gr.Image(type="pil", label="Upload Traffic Sign Image")
+                    input_img = gr.ImageEditor(type="pil", label="Upload & Crop Traffic Sign Image", brush=False, eraser=False, transforms=["crop"])
                     btn = gr.Button("Classify Image", variant="primary")
                 with gr.Column():
                     output_label = gr.Label(num_top_classes=5, label="Predicted Class & Confidence Score")
