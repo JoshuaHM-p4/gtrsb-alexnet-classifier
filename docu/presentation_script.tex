@@ -1,0 +1,232 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage[hidelinks]{hyperref}
+\usepackage{titlesec}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+
+\definecolor{primary}{RGB}{21, 57, 107}
+\definecolor{secondary}{RGB}{46, 125, 50}
+\definecolor{speechbg}{RGB}{248, 249, 250}
+
+\titleformat{\section}{\large\bfseries\color{primary}}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries\color{secondary}}{\thesubsection}{1em}{}
+
+\title{\bfseries Traffic Sign Classification using AlexNet \\ Presenter Script \& Speaker Notes}
+\author{\textbf{Group 1:} Carlos Jerico S. Dela Torre, Joshua H. Mistal, Aidan R. Tiu}
+\date{CMPE 362 Pattern Recognition \\ Polytechnic University of the Philippines \\ June 2026}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\clearpage
+\section{Slide 1: Title Slide}
+\textbf{Slide Visual Content:} \textit{Image Classification Using CNN Architectures: AlexNet Classification on German Traffic Sign Recognition Benchmark (GTSRB)}\\ [8pt]
+\noindent
+\begin{tabular}{!{\color{primary}\vrule width 3pt} p{0.92\textwidth}}
+  \small\color{black!80} "Good day everyone. Welcome to our final project presentation for CMPE 362 Pattern Recognition. We are Group 1: Carlos Jerico Dela Torre, Joshua Mistal, and Aidan Tiu, working under the guidance of Professor Mon Arjay Malbog.\newline\newline Our research focuses on implementing and evaluating the AlexNet Convolutional Neural Network architecture for Traffic Sign Recognition using the GTSRB dataset. We will walk you through our objectives, methodology, evaluation metrics, and future recommendations."
+\end{tabular}
+\vspace{15pt}
+
+\section{Slide 2: Project Overview \& Executive Summary}
+\textbf{Slide Visual Content:} \textit{Project Overview \& Executive Summary}\\ [8pt]
+\noindent
+\begin{tabular}{!{\color{primary}\vrule width 3pt} p{0.92\textwidth}}
+  \small\color{black!80} "To begin with our executive summary: Traffic Sign Recognition (TSR) is a critical perception module in modern Driver Assistance Systems (ADAS) and self-driving platforms.\newline\newline Our research utilizes a transfer learning approach with a pre-trained AlexNet CNN. We froze the convolutional layers to preserve low-level features and retrained only the customized classifier head to output predictions for the 43 target classes of the GTSRB dataset.\newline\newline Our model achieved outstanding metrics: a final classification accuracy of \textbf{98.91\%}, a macro-averaged F1-score of \textbf{0.9910}, and a macro-averaged ROC-AUC of \textbf{1.0000}. The pipeline successfully overcomes real-world environmental noise and severe dataset imbalance."
+\end{tabular}
+\vspace{15pt}
+
+\section{Slide 3: Chapter 1: Introduction - Background \& Problem Statement}
+\textbf{Slide Visual Content:} \textit{Chapter 1: Background \& Problem Statement}\\ [8pt]
+\noindent
+\begin{tabular}{!{\color{primary}\vrule width 3pt} p{0.92\textwidth}}
+  \small\color{black!80} "Let's review the background and problem statement. Drivers and autonomous agents rely on traffic signs to negotiate safety guidelines. Standard computer vision models often struggle with physical noise like motion blur, dynamic shadows, and bad lighting.\newline\newline Furthermore, the GTSRB dataset presents a severe class imbalance: some signs have thousands of training samples, while others have only a few hundred. Standard models trained on this data become biased toward majority classes.\newline\newline Finally, vehicle edge processors require computationally efficient models that process frames at high speed without wasting energy. This creates the need for a balanced, low-latency deep learning architecture."
+\end{tabular}
+\vspace{15pt}
+
+\section{Slide 4: Chapter 1: Project Objectives}
+\textbf{Slide Visual Content:} \textit{Chapter 1: Project Objectives}\\ [8pt]
+\noindent
+\begin{tabular}{!{\color{primary}\vrule width 3pt} p{0.92\textwidth}}
+  \small\color{black!80} "To address these issues, we set three main objectives:\newline\newline *   \textbf{Objective 1: Data Preprocessing.} Standardize input dimensions by scaling images to 256x256, center-cropping to a 224x224x3 shape, and applying channel normalization.\newline\newline *   \textbf{Objective 2: Architecture Adaptation.} Freeze convolutional layers of a pre-trained PyTorch AlexNet model and reconstruct the classifier head to map features to the 43 target output classes.\newline\newline *   \textbf{Objective 3: Model Evaluation.} Train the classifier head, apply early stopping to prevent overfitting, and evaluate performance using metrics like accuracy, precision, recall, and ROC-AUC."
+\end{tabular}
+\vspace{15pt}
+
+\section{Slide 5: Chapter 2: Literature Review}
+\textbf{Slide Visual Content:} \textit{Chapter 2: Literature Review}\\ [8pt]
+\noindent
+\begin{tabular}{!{\color{primary}\vrule width 3pt} p{0.92\textwidth}}
+  \small\color{black!80} "Moving to Chapter 2, literature shows that early TSR systems relied on color segmentation and geometric matching, which were fragile in outdoor settings.\newline\newline Sermanet and LeCun in 2011 demonstrated that Convolutional Neural Networks can exceed human-level classification performance on the benchmark.\newline\newline To improve efficiency, Ma et al. customized AlexNet specifically for TSR, using smaller convolution kernels to prevent overfitting. Recently, Arcos-Garcia et al. showed that while deeper networks like VGG or ResNet provide slight accuracy gains, AlexNet offers a superior speed-accuracy trade-off, making it ideal for edge computing."
+\end{tabular}
+\vspace{15pt}
+
+\section{Slide 6: Chapter 2: CNN Architecture Overview}
+\textbf{Slide Visual Content:} \textit{Chapter 2: CNN Architecture Overview}\\ [8pt]
+\noindent
+\begin{tabular}{!{\color{primary}\vrule width 3pt} p{0.92\textwidth}}
+  \small\color{black!80} "Unlike standard neural networks that flatten images and destroy spatial structures, CNNs preserve local 2D relationships using sliding kernels.\newline\newline Key CNN concepts include:\newline\newline *   \textbf{Local Receptive Fields:} sliding filters extract visual features like edges and curves.\newline\newline *   \textbf{Weight Sharing:} reusing kernel parameters dramatically reduces the training parameter count, preventing overfitting.\newline\newline *   \textbf{Hierarchical Layout:} early layers extract low-level geometry, while deeper layers extract high-level semantic abstractions."
+\end{tabular}
+\vspace{15pt}
+
+\section{Slide 7: Table: CNN Basic Layers}
+\textbf{Slide Visual Content:} \textit{CNN Structural Layer Summary}\\ [8pt]
+\noindent
+\begin{tabular}{!{\color{primary}\vrule width 3pt} p{0.92\textwidth}}
+  \small\color{black!80} "Table 1 on the slide summarizes the basic structural layers of a CNN:\newline\newline *   \textbf{Convolutional Layers} apply kernel filters to generate spatial feature maps.\newline\newline *   \textbf{Activation (ReLU) Layers} introduce non-linearity to learn complex boundaries.\newline\newline *   \textbf{Pooling Layers} reduce spatial resolution, compute, and parameter overhead.\newline\newline *   \textbf{Fully Connected Layers} aggregate high-level features to output class logits."
+\end{tabular}
+\vspace{15pt}
+
+\section{Slide 8: Chapter 2: AlexNet Architecture Details}
+\textbf{Slide Visual Content:} \textit{Chapter 2: AlexNet Architecture Details}\\ [8pt]
+\noindent
+\begin{tabular}{!{\color{primary}\vrule width 3pt} p{0.92\textwidth}}
+  \small\color{black!80} "AlexNet consists of 5 convolutional layers followed by 3 fully connected layers.\newline\newline The PyTorch implementation standardizes the input grid to 224x224x3 using a padding of 2 in the first layer.\newline\newline To combat overfitting in the fully connected layers, the network applies Dropout regularization with a probability of 0.5. During training, half of the activations are randomly deactivated, promoting robust redundant features."
+\end{tabular}
+\vspace{15pt}
+
+\section{Slide 9: Figure 1: AlexNet Architectural Layout Diagram (Dedicated Visual Slide)}
+\textbf{Slide Visual Content:} \textit{Figure 1: AlexNet Architectural Layout Diagram}\\ [8pt]
+\noindent
+\begin{tabular}{!{\color{primary}\vrule width 3pt} p{0.92\textwidth}}
+  \small\color{black!80} Here, in Figure 1, you can see the complete architectural diagram of AlexNet. It illustrates the sequence of convolutional filters, pooling reductions, flattening, and fully connected classification layers that make up the network's processing pipeline.
+\end{tabular}
+\vspace{15pt}
+
+\section{Slide 10: Chapter 3: Methodology Overview}
+\textbf{Slide Visual Content:} \textit{Chapter 3: Methodology Overview}\\ [8pt]
+\noindent
+\begin{tabular}{!{\color{primary}\vrule width 3pt} p{0.92\textwidth}}
+  \small\color{black!80} "Now, we will review Chapter 3: Methodology.\newline\newline Our implementation was coded in Python 3 with CUDA GPU acceleration.\newline\newline *   We used \textbf{PyTorch and Torchvision} to model the network graphs and image transforms.\newline\newline *   \textbf{Scikit-Learn} generated our stratified dataset splits.\newline\newline *   \textbf{Matplotlib and Seaborn} plotted our evaluation metrics and performance curves."
+\end{tabular}
+\vspace{15pt}
+
+\section{Slide 11: Figure 2: Sample Signs Across all 43 GTSRB Classes (Dedicated Visual Slide)}
+\textbf{Slide Visual Content:} \textit{Figure 2: Sample Signs Across all 43 GTSRB Classes}\\ [8pt]
+\noindent
+\begin{tabular}{!{\color{primary}\vrule width 3pt} p{0.92\textwidth}}
+  \small\color{black!80} Figure 2 shows sample traffic signs across all 43 categories of the GTSRB dataset. It illustrates the wide variation in color, shape, borders, and symbols that the model must learn to classify.
+\end{tabular}
+\vspace{15pt}
+
+\section{Slide 12: Figure 3: Class-wise Sample Distribution Heatmap (Dedicated Visual Slide)}
+\textbf{Slide Visual Content:} \textit{Figure 3: Class-wise Sample Distribution Heatmap}\\ [8pt]
+\noindent
+\begin{tabular}{!{\color{primary}\vrule width 3pt} p{0.92\textwidth}}
+  \small\color{black!80} Figure 3 visualizes the class-wise sample distribution in the dataset. This highlights the severe class imbalance, showing that majority classes have thousands of samples while minority classes have only a few hundred.
+\end{tabular}
+\vspace{15pt}
+
+\section{Slide 13: Chapter 3: Data Loading \& Split}
+\textbf{Slide Visual Content:} \textit{Chapter 3: Data Loading \& Split}\\ [8pt]
+\noindent
+\begin{tabular}{!{\color{primary}\vrule width 3pt} p{0.92\textwidth}}
+  \small\color{black!80} "To address this class imbalance, we pooled the training and testing datasets and performed a stratified 70\% training, 15\% validation, and 15\% testing split.\newline\newline Stratification ensures that minority classes are represented equally across all three splits, preventing bias. We loaded training data with dynamic shuffling, and kept validation and testing loaders static for reproducible metrics."
+\end{tabular}
+\vspace{15pt}
+
+\section{Slide 14: Custom Dataset Implementation (Code Card Slide)}
+\textbf{Slide Visual Content:} \textit{Methodology: PyTorch Dataset Class}\\ [8pt]
+\noindent
+\begin{tabular}{!{\color{primary}\vrule width 3pt} p{0.92\textwidth}}
+  \small\color{black!80} "On this slide, you can see the code implementation of our custom `GTSRBDataset` class. It inherits from PyTorch's `Dataset` class, mapping relative paths and class IDs from our CSV metadata.\newline\newline It converts all images to the RGB color space to ensure three-channel compatibility and applies the designated transformations."
+\end{tabular}
+\vspace{15pt}
+
+\section{Slide 15: Chapter 3: Preprocessing \& Augmentation}
+\textbf{Slide Visual Content:} \textit{Chapter 3: Preprocessing \& Augmentation}\\ [8pt]
+\noindent
+\begin{tabular}{!{\color{primary}\vrule width 3pt} p{0.92\textwidth}}
+  \small\color{black!80} "To help the model generalize, we designed separate preprocessing pipelines:\newline\newline *   \textbf{Training Pipeline:} Scales images to 256x256, applies random rotation (up to 15°) to simulate camera tilt, and color jitter (0.2) to simulate lighting changes. It then center-crops to 224x224 and normalizes.\newline\newline *   \textbf{Validation/Test Pipeline:} Scales images to 256x256, center-crops directly to 224x224, and normalizes. We omit random rotations and color jitters to ensure clean and reproducible evaluation metrics."
+\end{tabular}
+\vspace{15pt}
+
+\section{Slide 16: Chapter 3: Transfer Learning Setup}
+\textbf{Slide Visual Content:} \textit{Chapter 3: Transfer Learning Setup}\\ [8pt]
+\noindent
+\begin{tabular}{!{\color{primary}\vrule width 3pt} p{0.92\textwidth}}
+  \small\color{black!80} "Our transfer learning strategy is straightforward:\newline\newline *   \textbf{Freeze Feature Layers:} We disable gradients (`requires\_grad=False`) on the pre-trained convolutional feature extraction layers, preserving ImageNet visual filters.\newline\newline *   \textbf{Classifier Head Swap:} We replace the final linear layer (index 6) with a new linear layer mapping 4,096 inputs to 43 output logits, training only these classification parameters."
+\end{tabular}
+\vspace{15pt}
+
+\section{Slide 17: Model Customization and Freezing (Code Card Slide)}
+\textbf{Slide Visual Content:} \textit{Methodology: Model Initialization}\\ [8pt]
+\noindent
+\begin{tabular}{!{\color{primary}\vrule width 3pt} p{0.92\textwidth}}
+  \small\color{black!80} This slide displays our PyTorch initialization code. It shows how the pre-trained weights are loaded, how convolutional parameters are frozen, and how the final linear classifier layer is modified and pushed to the GPU.
+\end{tabular}
+\vspace{15pt}
+
+\section{Slide 18: Chapter 3: Training Process Configuration}
+\textbf{Slide Visual Content:} \textit{Chapter 3: Training \& Optimization Settings}\\ [8pt]
+\noindent
+\begin{tabular}{!{\color{primary}\vrule width 3pt} p{0.92\textwidth}}
+  \small\color{black!80} "We optimized the model using \textbf{Cross Entropy Loss} and the \textbf{Adam optimizer} at a learning rate of \textbf{0.0001}, updating only the classifier weights.\newline\newline We trained the model for a maximum of 15 epochs and integrated early stopping with a validation loss patience of 3. If validation loss failed to improve for three consecutive epochs, training would stop to prevent overfitting."
+\end{tabular}
+\vspace{15pt}
+
+\section{Slide 19: Chapter 4: Results - Classification Summary}
+\textbf{Slide Visual Content:} \textit{Chapter 4: Results - Classification Summary}\\ [8pt]
+\noindent
+\begin{tabular}{!{\color{primary}\vrule width 3pt} p{0.92\textwidth}}
+  \small\color{black!80} "This brings us to Chapter 4: Results and Discussion. The model was evaluated on the unseen testing set.\newline\newline The results show high sensitivity and specificity. The macro Precision of 0.9924 and Recall of 0.9899 confirm accurate predictions across all classes. The F1-score of 0.9910 indicates that the model successfully handles the dataset's class imbalance without bias toward heavily populated classes."
+\end{tabular}
+\vspace{15pt}
+
+\section{Slide 20: Overall Performance Score Sheet (Table 2)}
+\textbf{Slide Visual Content:} \textit{Overall Performance Score Sheet}\\ [8pt]
+\noindent
+\begin{tabular}{!{\color{primary}\vrule width 3pt} p{0.92\textwidth}}
+  \small\color{black!80} "Table 2 summarizes our test metrics:\newline\newline *   \textbf{Test Accuracy:} \textbf{98.91\%}\newline\newline *   \textbf{Precision (Macro Avg):} \textbf{0.9924}\newline\newline *   \textbf{Recall (Macro Avg):} \textbf{0.9899}\newline\newline *   \textbf{F1-Score (Macro Avg):} \textbf{0.9910}\newline\newline *   \textbf{ROC-AUC (Macro Avg):} \textbf{1.0000}"
+\end{tabular}
+\vspace{15pt}
+
+\section{Slide 21: Figure 4: Loss/Accuracy Curves (Dedicated Visual Slide)}
+\textbf{Slide Visual Content:} \textit{Figure 4: Training and Validation Loss/Accuracy History}\\ [8pt]
+\noindent
+\begin{tabular}{!{\color{primary}\vrule width 3pt} p{0.92\textwidth}}
+  \small\color{black!80} "Figure 4 displays our training and validation curves.\newline\newline The training loss decreased smoothly from 0.8950 to 0.1263, while validation loss dropped from 0.2851 to 0.0311, showing that the model learned features without overfitting. Validation accuracy reached a peak of \textbf{99.06\%} in the final epoch."
+\end{tabular}
+\vspace{15pt}
+
+\section{Slide 22: Figure 5: Confusion Matrix for 43 Classes (Dedicated Visual Slide)}
+\textbf{Slide Visual Content:} \textit{Figure 5: Confusion Matrix for 43 Classes}\\ [8pt]
+\noindent
+\begin{tabular}{!{\color{primary}\vrule width 3pt} p{0.92\textwidth}}
+  \small\color{black!80} "Figure 5 shows the confusion matrix for the test set.\newline\newline The strong diagonal line indicates that almost all instances were correctly classified, with minimal confusion even among visually similar signs like different speed limit classes."
+\end{tabular}
+\vspace{15pt}
+
+\section{Slide 23: Figure 6: Macro-Average Receiver Operating Curve (Dedicated Visual Slide)}
+\textbf{Slide Visual Content:} \textit{Figure 6: Macro-Average Receiver Operating Curve (ROC)}\\ [8pt]
+\noindent
+\begin{tabular}{!{\color{primary}\vrule width 3pt} p{0.92\textwidth}}
+  \small\color{black!80} Figure 6 shows the macro-averaged ROC curve. The Area Under the Curve (AUC) is \textbf{1.0000}, representing near-perfect class separation boundaries and high model confidence.
+\end{tabular}
+\vspace{15pt}
+
+\section{Slide 24: Figure 7: Qualitative Predictions on 20 Test Images (Dedicated Visual Slide)}
+\textbf{Slide Visual Content:} \textit{Figure 7: Qualitative Predictions on 20 Test Images}\\ [8pt]
+\noindent
+\begin{tabular}{!{\color{primary}\vrule width 3pt} p{0.92\textwidth}}
+  \small\color{black!80} Figure 7 displays a random batch of 20 test images classified by our model. The model correctly classified all 20 signs, demonstrating robustness under challenging conditions like motion blur, low lighting, and perspective tilt.
+\end{tabular}
+\vspace{15pt}
+
+\section{Slide 25: Chapter 5: Conclusions}
+\textbf{Slide Visual Content:} \textit{Chapter 5: Conclusions}\\ [8pt]
+\noindent
+\begin{tabular}{!{\color{primary}\vrule width 3pt} p{0.92\textwidth}}
+  \small\color{black!80} "In conclusion, this project successfully implemented and evaluated the AlexNet CNN on the GTSRB dataset.\newline\newline Our key findings are:\newline\newline 1.  \textbf{Transfer Learning:} Freezing feature layers and training only the classifier head is a highly efficient strategy for TSR.\newline\newline 2.  \textbf{Accuracy:} Achieved a test accuracy of 98.91\%, matching deeper networks at a fraction of the training time.\newline\newline 3.  \textbf{Imbalance Handling:} Stratification successfully prevented bias towards majority categories, yielding an F1-score of 0.9910."
+\end{tabular}
+\vspace{15pt}
+
+\section{Slide 26: Chapter 5: Recommendations \& Future Work}
+\textbf{Slide Visual Content:} \textit{Chapter 5: Recommendations \& Future Work}\\ [8pt]
+\noindent
+\begin{tabular}{!{\color{primary}\vrule width 3pt} p{0.92\textwidth}}
+  \small\color{black!80} "Finally, we recommend the following directions for future research:\newline\newline 1.  \textbf{Gradual Unfreezing:} Explore gradual unfreezing of early convolutional layers during training to fine-tune filters for traffic sign geometric boundaries.\newline\newline 2.  \textbf{Multi-National Dataset Expansion:} Incorporate traffic sign datasets from other countries, such as US speed limits or Chinese warning symbols. This builds a more globally generalized and universal approach to classification.\newline\newline 3.  \textbf{Transition to Object Detection:} Extend the pipeline beyond isolated classification to real-time object detection frameworks, such as YOLO or Faster R-CNN, to localize and classify multiple signs simultaneously within complex road scenes.\newline\newline 4.  \textbf{Edge Compiler Conversion and Deployment:} Compile the trained model using TensorRT or ONNX and deploy on energy-efficient edge processors like Nvidia Jetson or Raspberry Pi to benchmark real-world inference latency.\newline\newline Thank you for your time and attention. We are now happy to address any questions you may have."
+\end{tabular}
+\vspace{15pt}
+\end{document}
