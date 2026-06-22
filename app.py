@@ -166,7 +166,7 @@ api = FastAPI()
 def healthz():
     return {"status": "ok"}
 
-app = gr.mount_gradio_app(api, demo, path="/")
+app = gr.mount_gradio_app(api, demo, path="/", ssr_mode=False)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("PORT", "7860")))
