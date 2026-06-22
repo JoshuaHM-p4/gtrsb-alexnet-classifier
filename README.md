@@ -29,16 +29,36 @@ This is a demonstration repository for a fine-tuned AlexNet model on the German 
 ## Setup Instructions
 
 ### 1. Prerequisites
-Ensure you have Python 3.10+ installed. You will also need `git-lfs` to pull the large model weights file (`.pth`) properly.
+Ensure you have Python 3.10+ installed. You will also need **Git LFS** to pull the large model weights file (`.pth`) properly.
 
-```bash
-# Install Git LFS if not already installed (Debian/Ubuntu)
-sudo apt-get install git-lfs
-git lfs install
-```
+#### Installing Git LFS:
+*   **Linux (Debian/Ubuntu)**:
+    ```bash
+    sudo apt-get install git-lfs
+    git lfs install
+    ```
+*   **Linux (CentOS/RHEL/Fedora)**:
+    ```bash
+    sudo dnf install git-lfs
+    git lfs install
+    ```
+*   **Linux (Arch)**:
+    ```bash
+    sudo pacman -S git-lfs
+    git lfs install
+    ```
+*   **Windows**:
+    *   Download and run the installer from the official [git-lfs.com](https://git-lfs.com) website, or install via **winget**:
+        ```powershell
+        winget install github.git-lfs
+        ```
+    *   Initialize it in your terminal:
+        ```bash
+        git lfs install
+        ```
 
 ### 2. Clone and Pull Weights
-Clone the repository and pull the LFS weights:
+Clone the repository and pull the large model weights:
 ```bash
 git clone <repository-url>
 cd gtsrb-alexnet-classifier
@@ -46,25 +66,47 @@ git lfs pull
 ```
 
 ### 3. Install Dependencies
-Install all required Python libraries:
-```bash
-pip install -r requirements.txt
-```
+Install all required Python packages:
+*   **Linux / macOS**:
+    ```bash
+    pip3 install -r requirements.txt
+    ```
+*   **Windows**:
+    ```powershell
+    pip install -r requirements.txt
+    ```
 
 ### 4. Run the Gradio App Locally
-To start the interactive web application:
-```bash
-python app.py
-```
-Open your browser and navigate to `http://localhost:7860` to access the classifier interface.
+Start the local FastAPI/Gradio server:
+*   **Linux / macOS**:
+    ```bash
+    python3 app.py
+    ```
+*   **Windows**:
+    ```powershell
+    python app.py
+    ```
+Once running, open your browser and navigate to `http://localhost:7860` to access the classifier interface.
 
 ### 5. Generate Presentation Assets
-To modify or regenerate the presentation slides and notes:
-```bash
-# Build the PowerPoint presentation slide deck
-python generate_pptx.py
+To rebuild or update the presentation slide deck and speaker notes:
+*   **Linux / macOS**:
+    ```bash
+    # Rebuild PowerPoint slides
+    python3 generate_pptx.py
+    
+    # Compile presenter script/speaker notes to PDF
+    python3 convert_script_to_pdf.py
+    ```
+*   **Windows**:
+    ```powershell
+    # Rebuild PowerPoint slides
+    python generate_pptx.py
+    
+    # Compile presenter script/speaker notes to PDF
+    python convert_script_to_pdf.py
+    ```
 
-# Build the speaker notes PDF
-python convert_script_to_pdf.py
-```
+*Note: Generating the presenter script PDF requires a working LaTeX installation (e.g., `pdflatex` added to system PATH). On Linux, install `texlive-latex-base` and `texlive-latex-recommended`. On Windows, install [MiKTeX](https://miktex.org) or TeX Live for Windows.*
+
 
